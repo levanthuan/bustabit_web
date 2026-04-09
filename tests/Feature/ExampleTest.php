@@ -1,7 +1,7 @@
 <?php
 
-test('the application returns a successful response', function () {
+test('khách truy cập gốc site bị chuyển tới đăng nhập', function () {
     $response = $this->get('/');
 
-    $response->assertStatus(200);
+    $response->assertRedirect(route('login'));
 });

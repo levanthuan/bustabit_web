@@ -11,7 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Gọi redirectGuestsTo sau redirectUsersTo: redirectTo(users:) mặc định guests=null và ghi đè redirect đăng nhập.
+        $middleware->redirectUsersTo(fn () => route('home'));
+        $middleware->redirectGuestsTo(fn () => route('login'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
