@@ -9,6 +9,10 @@ Route::middleware('auth')->group(function (): void {
         return view('home');
     })->name('home');
 
+    Route::get('/tt/{game}/records/since', [CaseGameController::class, 'recordsSince'])
+        ->where('game', 'tt3|tt5|tt7|tt10')
+        ->name('case.records.since');
+
     Route::get('/tt/{game}', [CaseGameController::class, 'show'])
         ->where('game', 'tt3|tt5|tt7|tt10')
         ->name('case.show');

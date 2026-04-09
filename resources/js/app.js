@@ -125,7 +125,224 @@ function initAdminSidebarCollapse() {
     sync();
 }
 
+const CASE_POLL_INTERVAL_MS = 3000;
+
+/**
+ * Poll API khi đang xem ngày hôm nay: thêm row mới vào bảng không cần reload.
+ */
+function initCaseLivePoll() {
+    const root = document.getElementById('case-live-root');
+
+    if (!root || root.dataset.casePoll !== '1') {
+        return;
+    }
+
+    const pollUrl = root.dataset.casePollUrl;
+    const date = root.dataset.caseDate;
+
+    if (!pollUrl || !date) {
+        return;
+    }
+
+    const tbody = document.getElementById('case-records-tbody');
+    const emptyState = document.getElementById('case-empty-state');
+    const tablePanel = document.getElementById('case-table-panel');
+    const countEl = document.getElementById('case-record-count');
+    const spinner = document.getElementById('case-live-spinner');
+    const spinnerText = document.getElementById('case-live-spinner-text');
+    const loadingRowText = document.getElementById('case-loading-row-text');
+
+    if (!tbody || !emptyState || !tablePanel || !countEl) {
+        return;
+    }
+
+    let afterId = Number.parseInt(root.dataset.caseAfterId ?? '0', 10);
+    if (Number.isNaN(afterId)) {
+        afterId = 0;
+    }
+
+    let timerId = null;
+
+    function syncAfterIdFromDom() {
+        const rows = tbody.querySelectorAll('tr[data-record-id]');
+        let max = afterId;
+        rows.forEach((row) => {
+            const id = Number.parseInt(row.getAttribute('data-record-id') ?? '0', 10);
+            if (!Number.isNaN(id) && id > max) {
+                max = id;
+            }
+        });
+        afterId = max;
+        root.dataset.caseAfterId = String(afterId);
+    }
+
+    syncAfterIdFromDom();
+
+    /** Cuộn main xuống tận cùng (hàng loading row). */
+    function scrollToBottom() {
+        const main = document.querySelector('main');
+        if (main) {
+            main.scrollTop = main.scrollHeight;
+        }
+    }
+
+    function buildRow(record) {
+        const isDead = Number(record.dead_flg) === 1;
+        const tr = document.createElement('tr');
+        tr.dataset.recordId = String(record.id);
+        tr.className = isDead
+            ? 'bg-rose-50/70 hover:bg-rose-100/60 transition'
+            : 'bg-emerald-50/80 hover:bg-emerald-100/70 transition';
+
+        const tdCount = document.createElement('td');
+        tdCount.className = `px-4 py-2.5 text-right font-semibold tabular-nums ${isDead ? 'text-rose-900' : 'text-zinc-900'}`;
+        tdCount.textContent = record.count === null || record.count === undefined ? '—' : String(record.count);
+
+        const tdBusted = document.createElement('td');
+        tdBusted.className = `px-4 py-2.5 text-right tabular-nums ${isDead ? 'text-rose-700' : 'text-zinc-700'}`;
+        tdBusted.textContent = String(record.busted);
+
+        const tdDead = document.createElement('td');
+        tdDead.className = 'px-4 py-2.5 text-center';
+
+        if (record.dead_flg === null || record.dead_flg === undefined) {
+            const span = document.createElement('span');
+            span.className = 'text-zinc-300';
+            span.textContent = '—';
+            tdDead.appendChild(span);
+        } else if (isDead) {
+            const span = document.createElement('span');
+            span.className =
+                'inline-flex items-center gap-0.5 rounded-full bg-rose-200/80 px-2 py-0.5 text-xs font-bold text-rose-800 ring-1 ring-rose-300/60';
+            span.title = 'dead_flg = 1';
+            span.textContent = '★';
+            tdDead.appendChild(span);
+        } else {
+            const span = document.createElement('span');
+            span.className = 'inline-flex rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-500';
+            span.textContent = '0';
+            tdDead.appendChild(span);
+        }
+
+        tr.appendChild(tdCount);
+        tr.appendChild(tdBusted);
+        tr.appendChild(tdDead);
+
+        // Highlight bản ghi mới bằng nền xanh lá một lúc, rồi fade về bình thường.
+        if (!isDead) {
+            window.setTimeout(() => {
+                if (!tr.isConnected) {
+                    return;
+                }
+                tr.className = 'hover:bg-amber-50/40 transition';
+            }, 6000);
+        }
+
+        return tr;
+    }
+
+    function updateCount(delta) {
+        const match = countEl.textContent.match(/^(\d+)/);
+        const current = match ? Number.parseInt(match[1], 10) : 0;
+        const next = Math.max(0, current + delta);
+        countEl.textContent = `${next} bản ghi`;
+    }
+
+    async function tick() {
+        if (document.visibilityState !== 'visible') {
+            return;
+        }
+
+        try {
+            if (spinner) {
+                spinner.classList.remove('opacity-40');
+                spinner.classList.add('opacity-100');
+            }
+            if (spinnerText) {
+                spinnerText.textContent = 'Đang tải';
+            }
+            if (loadingRowText) {
+                loadingRowText.textContent = 'Đang tải dữ liệu mới...';
+            }
+
+            const { data } = await window.axios.get(pollUrl, {
+                params: { date, after_id: afterId },
+                headers: { Accept: 'application/json' },
+            });
+
+            const records = Array.isArray(data?.records) ? data.records : [];
+
+            if (records.length === 0) {
+                return;
+            }
+
+            if (tablePanel.classList.contains('hidden')) {
+                emptyState.classList.add('hidden');
+                tablePanel.classList.remove('hidden');
+            }
+
+            records.forEach((rec) => {
+                tbody.appendChild(buildRow(rec));
+            });
+
+            updateCount(records.length);
+            syncAfterIdFromDom();
+            scrollToBottom();
+            if (spinnerText) {
+                spinnerText.textContent = 'Đã sync';
+            }
+            if (loadingRowText) {
+                loadingRowText.textContent = records.length > 0 ? `Đã thêm ${records.length} bản ghi mới` : 'Đã sync';
+            }
+        } catch {
+            /* bỏ qua lỗi mạng, lần poll sau thử lại */
+            if (spinnerText) {
+                spinnerText.textContent = 'Lỗi mạng';
+            }
+            if (loadingRowText) {
+                loadingRowText.textContent = 'Lỗi mạng, sẽ thử lại...';
+            }
+        } finally {
+            if (spinner) {
+                spinner.classList.add('opacity-40');
+                spinner.classList.remove('opacity-100');
+            }
+        }
+    }
+
+    function start() {
+        if (timerId !== null) {
+            return;
+        }
+        timerId = window.setInterval(tick, CASE_POLL_INTERVAL_MS);
+    }
+
+    function stop() {
+        if (timerId === null) {
+            return;
+        }
+        window.clearInterval(timerId);
+        timerId = null;
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            start();
+            void tick();
+        } else {
+            stop();
+        }
+    });
+
+    // Scroll xuống cuối ngay khi vào trang hôm nay.
+    scrollToBottom();
+
+    start();
+    void tick();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initAdminDrawer();
     initAdminSidebarCollapse();
+    initCaseLivePoll();
 });
