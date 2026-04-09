@@ -9,3 +9,100 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* Drawer menu: ẩn ngoài màn hình trên mobile, mở bằng class trên body */
+#admin-sidebar {
+    position: fixed;
+    inset-block: 0;
+    left: 0;
+    z-index: 50;
+    width: min(18rem, 100vw - 1rem);
+    max-width: 18rem;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15);
+}
+
+@media (width >= 64rem) {
+    #admin-sidebar {
+        position: static;
+        z-index: auto;
+        width: 15rem;
+        max-width: none;
+        height: 100%;
+        transform: none;
+        box-shadow: none;
+        overflow-y: auto;
+        transition:
+            width 0.25s ease,
+            transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Sidebar thu gọn: chỉ còn đủ chỗ badge + nút */
+    html.admin-sidebar-collapsed #admin-sidebar {
+        width: 4.5rem;
+    }
+
+    html.admin-sidebar-collapsed #admin-sidebar .admin-sidebar-hide-collapsed {
+        display: none;
+    }
+
+    html.admin-sidebar-collapsed #admin-sidebar > div:first-child {
+        justify-content: center;
+        padding-inline: 0.5rem;
+    }
+
+    html.admin-sidebar-collapsed #admin-sidebar nav a {
+        justify-content: center;
+        gap: 0;
+        padding-inline: 0.5rem;
+        border-left-width: 0;
+    }
+
+    html.admin-sidebar-collapsed #admin-sidebar nav a .admin-sidebar-nav-chevron {
+        display: none;
+    }
+
+    html.admin-sidebar-collapsed #admin-sidebar .admin-sidebar-toggle-icon-collapse {
+        display: none;
+    }
+
+    html.admin-sidebar-collapsed #admin-sidebar .admin-sidebar-toggle-icon-expand {
+        display: block;
+    }
+}
+
+.admin-sidebar-toggle-icon-expand {
+    display: none;
+}
+
+body.admin-drawer-is-open #admin-sidebar {
+    transform: translateX(0);
+}
+
+@media (width >= 64rem) {
+    body.admin-drawer-is-open #admin-sidebar {
+        transform: none;
+    }
+}
+
+#admin-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background-color: rgb(24 24 27 / 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+@media (width >= 64rem) {
+    #admin-overlay {
+        display: none;
+    }
+}
+
+body.admin-drawer-is-open #admin-overlay {
+    opacity: 1;
+    pointer-events: auto;
+}

@@ -4,8 +4,9 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="color-scheme" content="light">
 
-        <title>@yield('title', 'Đăng nhập') — {{ config('app.name', 'Laravel') }}</title>
+        <title>@yield('title', 'Đăng nhập') — {{ config('app.name', 'Bustabit Tracking') }}</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />
@@ -14,17 +15,16 @@
             @vite(['resources/css/app.css', 'resources/js/app.js'])
         @endif
     </head>
-    <body class="min-h-full bg-zinc-950 font-sans text-zinc-100 antialiased">
-        {{-- Nền gradient + lưới --}}
+    <body class="min-h-full bg-zinc-50 font-sans text-zinc-900 antialiased">
         <div class="fixed inset-0 overflow-hidden" aria-hidden="true">
             <div
-                class="absolute -left-1/4 top-0 h-[600px] w-[600px] rounded-full bg-amber-500/20 blur-[120px] dark:bg-amber-500/15"
+                class="absolute -left-1/4 top-0 h-[520px] w-[520px] rounded-full bg-amber-200/40 blur-[100px]"
             ></div>
             <div
-                class="absolute -right-1/4 bottom-0 h-[500px] w-[500px] rounded-full bg-rose-600/25 blur-[100px] dark:bg-rose-600/20"
+                class="absolute -right-1/4 bottom-0 h-[420px] w-[420px] rounded-full bg-rose-200/50 blur-[90px]"
             ></div>
             <div
-                class="absolute inset-0 bg-[linear-gradient(to_right,#27272a_1px,transparent_1px),linear-gradient(to_bottom,#27272a_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_40%,#000_50%,transparent_100%)] opacity-40 dark:opacity-50"
+                class="absolute inset-0 bg-[linear-gradient(to_right,#e4e4e7_1px,transparent_1px),linear-gradient(to_bottom,#e4e4e7_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_75%_55%_at_50%_45%,#000_45%,transparent_100%)] opacity-60"
             ></div>
         </div>
 

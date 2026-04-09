@@ -3,71 +3,40 @@
 @section('title', 'Trang chủ')
 
 @section('content')
-    <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
-        <div class="mb-10">
-            <h1 class="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-4xl">
-                Xin chào, {{ auth()->user()->name }}
-            </h1>
-            <p class="mt-2 max-w-2xl text-base text-zinc-600 dark:text-zinc-400">
-                Bạn đã đăng nhập thành công. Đây là trang chủ sau khi xác thực.
-            </p>
-        </div>
-
-        <div class="grid gap-6 lg:grid-cols-3">
-            <div
-                class="relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/50 lg:col-span-2"
-            >
-                <div
-                    class="pointer-events-none absolute -right-20 -top-20 h-40 w-40 rounded-full bg-gradient-to-br from-amber-400/20 to-rose-600/20 blur-2xl"
-                ></div>
-                <h2 class="relative text-lg font-semibold text-zinc-900 dark:text-white">Tài khoản</h2>
-                <dl class="relative mt-6 space-y-4">
-                    <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-                        <dt class="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                            Họ tên
-                        </dt>
-                        <dd class="text-sm font-medium text-zinc-900 dark:text-zinc-100">{{ auth()->user()->name }}</dd>
-                    </div>
-                    <div class="h-px bg-zinc-100 dark:bg-zinc-800"></div>
-                    <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
-                        <dt class="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                            Email
-                        </dt>
-                        <dd class="break-all text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                            {{ auth()->user()->email }}
-                        </dd>
-                    </div>
-                    @if (auth()->user()->email_verified_at)
-                        <div class="h-px bg-zinc-100 dark:bg-zinc-800"></div>
-                        <div class="flex flex-wrap items-center gap-2">
-                            <span
-                                class="inline-flex items-center rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400"
-                            >
-                                Email đã xác minh
-                            </span>
-                        </div>
-                    @endif
-                </dl>
+    <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
+        <div
+            class="overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-sm ring-1 ring-zinc-950/5"
+        >
+            <div class="border-b border-zinc-100 bg-gradient-to-r from-amber-50/80 via-white to-rose-50/50 px-6 py-8 sm:px-10 sm:py-10">
+                <h1 class="text-2xl font-bold tracking-tight text-zinc-900 sm:text-3xl">
+                    Xin chào, {{ auth()->user()->name }}
+                </h1>
+                <p class="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-600 sm:text-base">
+                    Dùng <span class="font-medium text-zinc-800">menu bên trái</span> (trên điện thoại: chạm
+                    <span class="inline-flex h-6 w-6 items-center justify-center rounded border border-zinc-200 bg-white align-middle text-zinc-500">
+                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </span>
+                    góc trên) để mở <span class="font-medium">TT3 · TT5 · TT7 · TT10</span> và xem
+                    <span class="font-medium">count</span>, <span class="font-medium">busted</span>,
+                    <span class="font-medium">dead_flg</span>.
+                </p>
             </div>
-
-            <div
-                class="flex flex-col justify-between rounded-2xl border border-zinc-200 bg-gradient-to-br from-zinc-900 to-zinc-950 p-6 text-white shadow-lg dark:border-zinc-800"
-            >
-                <div>
-                    <h2 class="text-lg font-semibold">Trạng thái</h2>
-                    <p class="mt-2 text-sm text-zinc-400">Phiên đăng nhập đang hoạt động.</p>
-                </div>
-                <div class="mt-8">
-                    <div class="flex items-center gap-2 text-sm text-zinc-300">
-                        <span class="relative flex h-2.5 w-2.5">
-                            <span
-                                class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"
-                            ></span>
-                            <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+            <div class="grid gap-3 p-4 sm:grid-cols-2 sm:gap-4 sm:p-6 lg:grid-cols-4">
+                @foreach (['tt3' => 'TT3', 'tt5' => 'TT5', 'tt7' => 'TT7', 'tt10' => 'TT10'] as $key => $label)
+                    <a
+                        href="{{ route('case.show', $key) }}"
+                        class="group flex flex-col rounded-2xl border border-zinc-200 bg-zinc-50/50 p-4 transition hover:border-amber-300/60 hover:bg-white hover:shadow-md"
+                    >
+                        <span class="text-lg font-bold text-zinc-900">{{ $label }}</span>
+                        <span class="mt-1 text-xs text-zinc-500">Xem dữ liệu bảng</span>
+                        <span
+                            class="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-amber-700 group-hover:text-amber-800"
+                        >
+                            Mở
+                            <svg class="h-3.5 w-3.5 transition group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
                         </span>
-                        Đã kết nối
-                    </div>
-                </div>
+                    </a>
+                @endforeach
             </div>
         </div>
     </div>
