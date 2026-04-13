@@ -190,16 +190,21 @@ function initCaseLivePoll() {
         const isDead = Number(record.dead_flg) === 1;
         const tr = document.createElement('tr');
         tr.dataset.recordId = String(record.id);
+        tr.dataset.recordDatetime = record.game_datetime ?? '';
         tr.className = isDead
-            ? 'bg-rose-50/70 hover:bg-rose-100/60 transition'
+            ? 'border-l-4 border-rose-500 bg-rose-100 hover:bg-rose-100/80 transition'
             : 'bg-emerald-50/80 hover:bg-emerald-100/70 transition';
 
+        const tdId = document.createElement('td');
+        tdId.className = `px-4 py-2.5 text-left font-mono text-xs tabular-nums ${isDead ? 'text-rose-400' : 'text-zinc-400'}`;
+        tdId.textContent = String(record.id);
+
         const tdCount = document.createElement('td');
-        tdCount.className = `px-4 py-2.5 text-right font-semibold tabular-nums ${isDead ? 'text-rose-900' : 'text-zinc-900'}`;
+        tdCount.className = `px-4 py-2.5 text-right font-bold tabular-nums ${isDead ? 'text-rose-900' : 'text-zinc-900'}`;
         tdCount.textContent = record.count === null || record.count === undefined ? '—' : String(record.count);
 
         const tdBusted = document.createElement('td');
-        tdBusted.className = `px-4 py-2.5 text-right tabular-nums ${isDead ? 'text-rose-700' : 'text-zinc-700'}`;
+        tdBusted.className = `px-4 py-2.5 text-right font-semibold tabular-nums ${isDead ? 'text-rose-800' : 'text-zinc-700'}`;
         tdBusted.textContent = String(record.busted);
 
         const tdDead = document.createElement('td');
@@ -213,9 +218,9 @@ function initCaseLivePoll() {
         } else if (isDead) {
             const span = document.createElement('span');
             span.className =
-                'inline-flex items-center gap-0.5 rounded-full bg-rose-200/80 px-2 py-0.5 text-xs font-bold text-rose-800 ring-1 ring-rose-300/60';
+                'inline-flex items-center gap-1 rounded-full bg-rose-600 px-2.5 py-0.5 text-xs font-bold text-white shadow-sm shadow-rose-300';
             span.title = 'dead_flg = 1';
-            span.textContent = '★';
+            span.textContent = '★ Dead';
             tdDead.appendChild(span);
         } else {
             const span = document.createElement('span');
@@ -224,9 +229,15 @@ function initCaseLivePoll() {
             tdDead.appendChild(span);
         }
 
+        const tdDatetime = document.createElement('td');
+        tdDatetime.className = `px-4 py-2.5 text-right font-mono text-xs tabular-nums ${isDead ? 'text-rose-400' : 'text-zinc-400'}`;
+        tdDatetime.textContent = record.game_datetime ? record.game_datetime.slice(11, 19) : '—';
+
+        tr.appendChild(tdId);
         tr.appendChild(tdCount);
         tr.appendChild(tdBusted);
         tr.appendChild(tdDead);
+        tr.appendChild(tdDatetime);
 
         // Highlight bản ghi mới bằng nền xanh lá một lúc, rồi fade về bình thường.
         if (!isDead) {

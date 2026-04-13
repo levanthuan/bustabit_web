@@ -15,6 +15,8 @@ use Illuminate\View\View;
 
 class CaseGameController extends Controller
 {
+    private const TZ = 'Asia/Ho_Chi_Minh';
+
     /**
      * @var array<string, class-string<CaseGameRecord>>
      */
@@ -44,7 +46,7 @@ class CaseGameController extends Controller
         }
 
         $dateInput = $request->query('date');
-        $date = $this->parseDate($dateInput) ?? Carbon::today();
+        $date = $this->parseDate($dateInput) ?? Carbon::today(self::TZ);
 
         /** @var Collection<int, CaseGameRecord> $records */
         $records = $modelClass::query()
@@ -60,8 +62,8 @@ class CaseGameController extends Controller
             ->whereDate('game_datetime', '>', $date)
             ->min('game_datetime');
 
-        $prevDate = $prevDatetime ? Carbon::parse($prevDatetime)->toDateString() : null;
-        $nextDate = $nextDatetime ? Carbon::parse($nextDatetime)->toDateString() : null;
+        $prevDate = $prevDatetime ? Carbon::parse($prevDatetime, self::TZ)->toDateString() : null;
+        $nextDate = $nextDatetime ? Carbon::parse($nextDatetime, self::TZ)->toDateString() : null;
 
         return view('cases.show', [
             'gameKey' => $game,
@@ -89,9 +91,9 @@ class CaseGameController extends Controller
             'after_id' => ['sometimes', 'integer', 'min:0'],
         ]);
 
-        $date = Carbon::createFromFormat('Y-m-d', $validated['date'])->startOfDay();
+        $date = Carbon::createFromFormat('Y-m-d', $validated['date'], self::TZ)->startOfDay();
 
-        if (! $date->isToday()) {
+        if (! $date->isToday(self::TZ)) {
             return response()->json(['records' => []]);
         }
 
@@ -102,7 +104,7 @@ class CaseGameController extends Controller
             ->where('id', '>', $afterId)
             ->orderBy('game_datetime')
             ->orderBy('id')
-            ->get(['id', 'count', 'busted', 'dead_flg']);
+            ->get(['id', 'count', 'busted', 'dead_flg', 'game_datetime']);
 
         return response()->json([
             'records' => $rows->map(static fn (CaseGameRecord $r): array => [
@@ -110,6 +112,7 @@ class CaseGameController extends Controller
                 'count' => $r->count,
                 'busted' => $r->busted,
                 'dead_flg' => $r->dead_flg,
+                'game_datetime' => $r->game_datetime?->setTimezone(self::TZ)->format('Y-m-d H:i:s'),
             ])->values()->all(),
         ]);
     }
@@ -121,7 +124,7 @@ class CaseGameController extends Controller
         }
 
         try {
-            return Carbon::createFromFormat('Y-m-d', $value)->startOfDay();
+            return Carbon::createFromFormat('Y-m-d', $value, self::TZ)->startOfDay();
         } catch (\Throwable) {
             return null;
         }
