@@ -38,19 +38,52 @@
 
                 <div class="space-y-2">
                     <label for="password" class="text-sm font-medium text-zinc-700">Mật khẩu</label>
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        required
-                        autocomplete="current-password"
-                        placeholder="••••••••"
-                        class="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 placeholder:text-zinc-400 transition focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/30"
-                    />
+                    <div class="relative">
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            required
+                            autocomplete="current-password"
+                            placeholder="••••••••"
+                            class="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 pr-11 text-sm text-zinc-900 placeholder:text-zinc-400 transition focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400/30"
+                        />
+                        <button
+                            type="button"
+                            id="toggle-password"
+                            aria-label="Hiện / ẩn mật khẩu"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-lg text-zinc-400 transition hover:text-zinc-600"
+                        >
+                            {{-- Icon mắt (password ẩn) --}}
+                            <svg id="icon-eye" class="h-4.5 w-4.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            {{-- Icon mắt gạch (password hiện) --}}
+                            <svg id="icon-eye-off" class="hidden h-4.5 w-4.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.956 9.956 0 012.293-3.95M6.228 6.228A9.956 9.956 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.956 9.956 0 01-1.885 3.163M6.228 6.228L3 3m3.228 3.228l3.65 3.65M17.772 17.772l3.228 3.228m-3.228-3.228l-3.65-3.65"/>
+                            </svg>
+                        </button>
+                    </div>
                     @error('password')
                         <p class="text-sm font-medium text-rose-600">{{ $message }}</p>
                     @enderror
                 </div>
+                <script>
+                    (function () {
+                        const btn = document.getElementById('toggle-password');
+                        const input = document.getElementById('password');
+                        const iconEye = document.getElementById('icon-eye');
+                        const iconEyeOff = document.getElementById('icon-eye-off');
+                        if (!btn || !input) return;
+                        btn.addEventListener('click', function () {
+                            const isPassword = input.type === 'password';
+                            input.type = isPassword ? 'text' : 'password';
+                            iconEye.classList.toggle('hidden', isPassword);
+                            iconEyeOff.classList.toggle('hidden', !isPassword);
+                        });
+                    })();
+                </script>
 
                 <label class="flex cursor-pointer items-center gap-3 text-sm text-zinc-600">
                     <input
