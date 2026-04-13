@@ -279,18 +279,31 @@
             </form>
         </dialog>
 
-        {{-- Back to top button --}}
-        <button
-            id="back-to-top"
-            type="button"
-            aria-label="Lên đầu trang"
-            title="Lên đầu trang"
-            class="fixed bottom-5 right-5 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-500 shadow-md transition-all duration-300 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-800 hover:shadow-lg opacity-0 pointer-events-none"
-        >
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
-            </svg>
-        </button>
+        {{-- Scroll navigation buttons (bottom-right) --}}
+        <div class="fixed bottom-5 right-5 z-50 flex flex-col gap-2">
+            <button
+                id="back-to-top"
+                type="button"
+                aria-label="Lên đầu trang"
+                title="Lên đầu trang"
+                class="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-500 shadow-md transition-all duration-300 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-800 hover:shadow-lg opacity-0 pointer-events-none"
+            >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
+                </svg>
+            </button>
+            <button
+                id="scroll-to-bottom"
+                type="button"
+                aria-label="Xuống cuối trang"
+                title="Xuống cuối trang"
+                class="flex h-10 w-10 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-500 shadow-md transition-all duration-300 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-800 hover:shadow-lg opacity-0 pointer-events-none"
+            >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+        </div>
 
         {{-- Toast thông báo thành công --}}
         @if (session('status') === 'profile-updated' || session('status') === 'password-updated')

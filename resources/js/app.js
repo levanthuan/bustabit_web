@@ -409,29 +409,48 @@ function initUserMenu() {
 }
 
 /**
- * Back-to-top button: hiện khi cuộn xuống > 300px trong <main>, ẩn khi ở đầu trang.
+ * Scroll buttons: back-to-top và scroll-to-bottom.
+ * Hiện / ẩn tùy vị trí cuộn trong <main>.
  */
-function initBackToTop() {
-    const btn = document.getElementById('back-to-top');
+function initScrollButtons() {
+    const btnTop = document.getElementById('back-to-top');
+    const btnBottom = document.getElementById('scroll-to-bottom');
     const main = document.querySelector('main');
 
-    if (!btn || !main) {
+    if (!main) {
         return;
     }
 
-    function setVisible(visible) {
-        btn.classList.toggle('opacity-0', !visible);
-        btn.classList.toggle('pointer-events-none', !visible);
-        btn.classList.toggle('opacity-100', visible);
+    function setVisible(el, visible) {
+        if (!el) {
+            return;
+        }
+
+        el.classList.toggle('opacity-0', !visible);
+        el.classList.toggle('pointer-events-none', !visible);
     }
 
-    main.addEventListener('scroll', () => {
-        setVisible(main.scrollTop > 300);
-    }, { passive: true });
+    function onScroll() {
+        const scrollTop = main.scrollTop;
+        const scrollable = main.scrollHeight - main.clientHeight;
+        const nearBottom = scrollable > 0 && scrollable - scrollTop < 50;
 
-    btn.addEventListener('click', () => {
+        setVisible(btnTop, scrollTop > 300);
+        setVisible(btnBottom, scrollable > 300 && !nearBottom);
+    }
+
+    main.addEventListener('scroll', onScroll, { passive: true });
+
+    btnTop?.addEventListener('click', () => {
         main.scrollTo({ top: 0, behavior: 'smooth' });
     });
+
+    btnBottom?.addEventListener('click', () => {
+        main.scrollTo({ top: main.scrollHeight, behavior: 'smooth' });
+    });
+
+    // Kiểm tra lần đầu (trang có thể đã scroll sẵn)
+    onScroll();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -439,5 +458,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initAdminSidebarCollapse();
     initCaseLivePoll();
     initUserMenu();
-    initBackToTop();
+    initScrollButtons();
 });
