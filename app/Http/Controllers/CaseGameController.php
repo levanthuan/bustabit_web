@@ -48,22 +48,31 @@ class CaseGameController extends Controller
         $dateInput = $request->query('date');
         $date = $this->parseDate($dateInput) ?? Carbon::today(self::TZ);
 
+        // Chuyển boundary ngày VN sang UTC để query đúng dữ liệu lưu UTC
+        [$startUtc, $endUtc] = $this->utcBoundary($date);
+
         /** @var Collection<int, CaseGameRecord> $records */
         $records = $modelClass::query()
-            ->whereDate('game_datetime', $date)
+            ->whereBetween('game_datetime', [$startUtc, $endUtc])
             ->orderBy('id')
             ->get();
 
         $prevDatetime = $modelClass::query()
-            ->whereDate('game_datetime', '<', $date)
+            ->where('game_datetime', '<', $startUtc)
             ->max('game_datetime');
 
         $nextDatetime = $modelClass::query()
-            ->whereDate('game_datetime', '>', $date)
+            ->where('game_datetime', '>', $endUtc)
             ->min('game_datetime');
 
-        $prevDate = $prevDatetime ? Carbon::parse($prevDatetime, self::TZ)->toDateString() : null;
-        $nextDate = $nextDatetime ? Carbon::parse($nextDatetime, self::TZ)->toDateString() : null;
+        // Parse UTC string rồi convert sang VN để lấy đúng ngày VN
+        $prevDate = $prevDatetime
+            ? Carbon::parse($prevDatetime)->setTimezone(self::TZ)->toDateString()
+            : null;
+
+        $nextDate = $nextDatetime
+            ? Carbon::parse($nextDatetime)->setTimezone(self::TZ)->toDateString()
+            : null;
 
         return view('cases.show', [
             'gameKey' => $game,
@@ -76,7 +85,7 @@ class CaseGameController extends Controller
     }
 
     /**
-     * Trả về các bản ghi trong ngày `date` có id lớn hơn `after_id` (dùng poll realtime cho ngày hôm nay).
+     * Trả về các bản ghi trong ngày `date` (giờ VN) có id lớn hơn `after_id`.
      */
     public function recordsSince(Request $request, string $game): JsonResponse
     {
@@ -99,8 +108,10 @@ class CaseGameController extends Controller
 
         $afterId = (int) ($validated['after_id'] ?? 0);
 
+        [$startUtc, $endUtc] = $this->utcBoundary($date);
+
         $rows = $modelClass::query()
-            ->whereDate('game_datetime', $date)
+            ->whereBetween('game_datetime', [$startUtc, $endUtc])
             ->where('id', '>', $afterId)
             ->orderBy('game_datetime')
             ->orderBy('id')
@@ -115,6 +126,19 @@ class CaseGameController extends Controller
                 'game_datetime' => $r->game_datetime?->setTimezone(self::TZ)->format('Y-m-d H:i:s'),
             ])->values()->all(),
         ]);
+    }
+
+    /**
+     * Trả về [start, end] theo UTC tương ứng với 00:00–23:59:59 của $date theo giờ VN.
+     *
+     * @return array{Carbon, Carbon}
+     */
+    private function utcBoundary(Carbon $date): array
+    {
+        $start = $date->copy()->startOfDay()->utc();
+        $end = $date->copy()->endOfDay()->utc();
+
+        return [$start, $end];
     }
 
     private function parseDate(?string $value): ?Carbon
