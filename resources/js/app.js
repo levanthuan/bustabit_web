@@ -341,8 +341,103 @@ function initCaseLivePoll() {
     void tick();
 }
 
+/**
+ * User menu: dropdown toggle + modal dialogs cho Sửa hồ sơ / Đổi mật khẩu.
+ */
+function initUserMenu() {
+    const trigger = document.getElementById('user-menu-trigger');
+    const dropdown = document.getElementById('user-menu-dropdown');
+    const chevron = document.getElementById('user-menu-chevron');
+
+    function setDropdownOpen(open) {
+        if (!trigger || !dropdown) {
+            return;
+        }
+
+        dropdown.classList.toggle('hidden', !open);
+        trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+
+        if (chevron) {
+            chevron.style.transform = open ? 'rotate(180deg)' : '';
+        }
+    }
+
+    if (trigger && dropdown) {
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+            setDropdownOpen(!isOpen);
+        });
+
+        document.addEventListener('click', () => {
+            setDropdownOpen(false);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                setDropdownOpen(false);
+            }
+        });
+    }
+
+    // Mở modal khi click vào item trong dropdown
+    document.querySelectorAll('[data-open-modal]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            setDropdownOpen(false);
+            const modalId = btn.getAttribute('data-open-modal');
+            const modal = document.getElementById(modalId);
+            modal?.showModal();
+        });
+    });
+
+    // Đóng modal khi click nút close
+    document.querySelectorAll('[data-close-modal]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const modalId = btn.getAttribute('data-close-modal');
+            document.getElementById(modalId)?.close();
+        });
+    });
+
+    // Đóng modal khi click vào backdrop
+    document.querySelectorAll('dialog').forEach((dialog) => {
+        dialog.addEventListener('click', (e) => {
+            if (e.target === dialog) {
+                dialog.close();
+            }
+        });
+    });
+}
+
+/**
+ * Back-to-top button: hiện khi cuộn xuống > 300px trong <main>, ẩn khi ở đầu trang.
+ */
+function initBackToTop() {
+    const btn = document.getElementById('back-to-top');
+    const main = document.querySelector('main');
+
+    if (!btn || !main) {
+        return;
+    }
+
+    function setVisible(visible) {
+        btn.classList.toggle('opacity-0', !visible);
+        btn.classList.toggle('pointer-events-none', !visible);
+        btn.classList.toggle('opacity-100', visible);
+    }
+
+    main.addEventListener('scroll', () => {
+        setVisible(main.scrollTop > 300);
+    }, { passive: true });
+
+    btn.addEventListener('click', () => {
+        main.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initAdminDrawer();
     initAdminSidebarCollapse();
     initCaseLivePoll();
+    initUserMenu();
+    initBackToTop();
 });
