@@ -49,7 +49,6 @@ class CaseGameController extends Controller
         /** @var Collection<int, CaseGameRecord> $records */
         $records = $modelClass::query()
             ->whereDate('game_datetime', $date)
-            ->orderBy('game_datetime')
             ->orderBy('id')
             ->get();
 
