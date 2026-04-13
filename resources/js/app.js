@@ -196,19 +196,19 @@ function initCaseLivePoll() {
             : 'bg-emerald-50/80 hover:bg-emerald-100/70 transition';
 
         const tdId = document.createElement('td');
-        tdId.className = `px-4 py-2.5 text-left font-mono text-xs tabular-nums ${isDead ? 'text-rose-400' : 'text-zinc-400'}`;
+        tdId.className = `truncate px-1.5 py-1.5 text-left font-mono text-[10px] tabular-nums sm:px-4 sm:py-2 sm:text-xs ${isDead ? 'text-rose-400' : 'text-zinc-400'}`;
         tdId.textContent = String(record.id);
 
         const tdCount = document.createElement('td');
-        tdCount.className = `px-4 py-2.5 text-right font-bold tabular-nums ${isDead ? 'text-rose-900' : 'text-zinc-900'}`;
+        tdCount.className = `px-1.5 py-1.5 text-right font-bold tabular-nums text-xs sm:px-4 sm:py-2 sm:text-sm ${isDead ? 'text-rose-900' : 'text-zinc-900'}`;
         tdCount.textContent = record.count === null || record.count === undefined ? '—' : String(record.count);
 
         const tdBusted = document.createElement('td');
-        tdBusted.className = `px-4 py-2.5 text-right font-semibold tabular-nums ${isDead ? 'text-rose-800' : 'text-zinc-700'}`;
+        tdBusted.className = `px-1.5 py-1.5 text-right font-semibold tabular-nums text-xs sm:px-4 sm:py-2 sm:text-sm ${isDead ? 'text-rose-800' : 'text-zinc-700'}`;
         tdBusted.textContent = String(record.busted);
 
         const tdDead = document.createElement('td');
-        tdDead.className = 'px-4 py-2.5 text-center';
+        tdDead.className = 'px-1 py-1.5 text-center sm:px-4 sm:py-2';
 
         if (record.dead_flg === null || record.dead_flg === undefined) {
             const span = document.createElement('span');
@@ -218,19 +218,19 @@ function initCaseLivePoll() {
         } else if (isDead) {
             const span = document.createElement('span');
             span.className =
-                'inline-flex items-center gap-1 rounded-full bg-rose-600 px-2.5 py-0.5 text-xs font-bold text-white shadow-sm shadow-rose-300';
+                'inline-flex items-center rounded-full bg-rose-600 px-1.5 py-0.5 text-[10px] font-bold text-white shadow-sm shadow-rose-300 sm:gap-1 sm:px-2.5 sm:text-xs';
             span.title = 'dead_flg = 1';
             span.textContent = '★ Dead';
             tdDead.appendChild(span);
         } else {
             const span = document.createElement('span');
-            span.className = 'inline-flex rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-500';
+            span.className = 'inline-flex rounded-full bg-zinc-100 px-1.5 py-0.5 text-[10px] font-medium text-zinc-500 sm:px-2 sm:text-xs';
             span.textContent = '0';
             tdDead.appendChild(span);
         }
 
         const tdDatetime = document.createElement('td');
-        tdDatetime.className = `px-4 py-2.5 text-right font-mono text-xs tabular-nums ${isDead ? 'text-rose-400' : 'text-zinc-400'}`;
+        tdDatetime.className = `px-1.5 py-1.5 text-right font-mono text-[10px] tabular-nums sm:px-4 sm:py-2 sm:text-xs ${isDead ? 'text-rose-400' : 'text-zinc-400'}`;
         tdDatetime.textContent = record.game_datetime ? record.game_datetime.slice(11, 19) : '—';
 
         tr.appendChild(tdId);
