@@ -12,21 +12,29 @@
             color: #1a1a1a;
         }
 
+        .page {
+            page-break-after: always;
+        }
+
+        .page:last-child {
+            page-break-after: avoid;
+        }
+
         .header {
             text-align: center;
-            margin-bottom: 8px;
-            padding-bottom: 5px;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
             border-bottom: 2px solid #d97706;
         }
 
         .header h1 {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
             color: #92400e;
         }
 
         .header p {
-            font-size: 10px;
+            font-size: 9px;
             color: #78716c;
             margin-top: 2px;
         }
@@ -98,9 +106,7 @@
         }
 
         .footer {
-            margin-top: 6px;
-            padding-top: 3px;
-            border-top: 1px solid #e5e7eb;
+            margin-top: 4px;
             text-align: right;
             font-size: 7px;
             color: #a1a1aa;
@@ -108,72 +114,76 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>{{ $gameLabel }} – {{ $date->format('d/m/Y') }}</h1>
-        <p>Tổng: {{ $totalRecords }} bản ghi</p>
-    </div>
+    @foreach ($pages as $pageIndex => $rows)
+        <div class="page">
+            <div class="header">
+                <h1>{{ $gameLabel }} – {{ $date->format('d/m/Y') }}</h1>
+                <p>Tổng: {{ $totalRecords }} bản ghi · Trang {{ $pageIndex + 1 }}/{{ count($pages) }}</p>
+            </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Đếm</th>
-                <th>Giá trị</th>
-                <th>Cầu chết</th>
-                <th>Giờ</th>
-                <th class="sep">Đếm</th>
-                <th>Giá trị</th>
-                <th>Cầu chết</th>
-                <th>Giờ</th>
-                <th class="sep">Đếm</th>
-                <th>Giá trị</th>
-                <th>Cầu chết</th>
-                <th>Giờ</th>
-                <th class="sep">Đếm</th>
-                <th>Giá trị</th>
-                <th>Cầu chết</th>
-                <th>Giờ</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($rows as $row)
-                @php
-                    $classes = [];
-                    for ($g = 0; $g < 4; $g++) {
-                        if (isset($row[$g]) && (int) $row[$g]->dead_flg === 1) {
-                            $classes[] = 'dead-row-' . ($g + 1);
-                        }
-                    }
-                @endphp
-                <tr class="{{ implode(' ', $classes) }}">
-                    @for ($g = 0; $g < 4; $g++)
-                        @php $rec = $row[$g] ?? null; @endphp
-                        @if ($rec)
-                            <td @if ($g > 0) class="sep" @endif>{{ $rec->count ?? '—' }}</td>
-                            <td>{{ $rec->busted }}</td>
-                            <td>
-                                @if ($rec->dead_flg === null)
-                                    <span class="normal-badge">—</span>
-                                @elseif ((int) $rec->dead_flg === 1)
-                                    <span class="dead-badge">★ Dead</span>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Đếm</th>
+                        <th>Giá trị</th>
+                        <th>Cầu chết</th>
+                        <th>Giờ</th>
+                        <th class="sep">Đếm</th>
+                        <th>Giá trị</th>
+                        <th>Cầu chết</th>
+                        <th>Giờ</th>
+                        <th class="sep">Đếm</th>
+                        <th>Giá trị</th>
+                        <th>Cầu chết</th>
+                        <th>Giờ</th>
+                        <th class="sep">Đếm</th>
+                        <th>Giá trị</th>
+                        <th>Cầu chết</th>
+                        <th>Giờ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($rows as $row)
+                        @php
+                            $classes = [];
+                            for ($g = 0; $g < 4; $g++) {
+                                if (isset($row[$g]) && (int) $row[$g]->dead_flg === 1) {
+                                    $classes[] = 'dead-row-' . ($g + 1);
+                                }
+                            }
+                        @endphp
+                        <tr class="{{ implode(' ', $classes) }}">
+                            @for ($g = 0; $g < 4; $g++)
+                                @php $rec = $row[$g] ?? null; @endphp
+                                @if ($rec)
+                                    <td @if ($g > 0) class="sep" @endif>{{ $rec->count ?? '—' }}</td>
+                                    <td>{{ $rec->busted }}</td>
+                                    <td>
+                                        @if ($rec->dead_flg === null)
+                                            <span class="normal-badge">—</span>
+                                        @elseif ((int) $rec->dead_flg === 1)
+                                            <span class="dead-badge">★ Dead</span>
+                                        @else
+                                            <span class="normal-badge">0</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ $rec->game_datetime?->setTimezone('Asia/Ho_Chi_Minh')->format('H:i:s') ?? '—' }}</td>
                                 @else
-                                    <span class="normal-badge">0</span>
+                                    <td @if ($g > 0) class="sep empty-cell" @else class="empty-cell" @endif>—</td>
+                                    <td class="empty-cell">—</td>
+                                    <td class="empty-cell">—</td>
+                                    <td class="empty-cell">—</td>
                                 @endif
-                            </td>
-                            <td>{{ $rec->game_datetime?->setTimezone('Asia/Ho_Chi_Minh')->format('H:i:s') ?? '—' }}</td>
-                        @else
-                            <td @if ($g > 0) class="sep empty-cell" @else class="empty-cell" @endif>—</td>
-                            <td class="empty-cell">—</td>
-                            <td class="empty-cell">—</td>
-                            <td class="empty-cell">—</td>
-                        @endif
-                    @endfor
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+                            @endfor
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
 
-    <div class="footer">
-        Xuất lúc {{ now()->setTimezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i:s') }}
-    </div>
+            <div class="footer">
+                Xuất lúc {{ now()->setTimezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i:s') }}
+            </div>
+        </div>
+    @endforeach
 </body>
 </html>

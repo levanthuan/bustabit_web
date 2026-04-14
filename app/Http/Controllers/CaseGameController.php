@@ -150,26 +150,33 @@ class CaseGameController extends Controller
             ->get();
 
         $groupCount = 4;
-        $perColumn = (int) ceil($records->count() / $groupCount);
-        $groups = $perColumn > 0
-            ? $records->chunk($perColumn)->values()
-            : collect();
+        $rowsPerPage = 45;
+        $recordsPerPage = $rowsPerPage * $groupCount;
 
-        /** @var list<array{0: CaseGameRecord|null, 1: CaseGameRecord|null, 2: CaseGameRecord|null}> $rows */
-        $rows = [];
-        for ($i = 0; $i < $perColumn; $i++) {
-            $row = [];
-            for ($g = 0; $g < $groupCount; $g++) {
-                $group = $groups->get($g);
-                $row[] = $group instanceof Collection ? $group->values()->get($i) : null;
+        /** @var list<list<array{0: CaseGameRecord|null, 1: CaseGameRecord|null, 2: CaseGameRecord|null, 3: CaseGameRecord|null}>> $pages */
+        $pages = [];
+
+        foreach ($records->chunk($recordsPerPage)->values() as $pageRecords) {
+            $perColumn = (int) ceil($pageRecords->count() / $groupCount);
+            $groups = $pageRecords->chunk($perColumn)->values();
+
+            $rows = [];
+            for ($i = 0; $i < $perColumn; $i++) {
+                $row = [];
+                for ($g = 0; $g < $groupCount; $g++) {
+                    $group = $groups->get($g);
+                    $row[] = $group instanceof Collection ? $group->values()->get($i) : null;
+                }
+                $rows[] = $row;
             }
-            $rows[] = $row;
+
+            $pages[] = $rows;
         }
 
         $pdf = Pdf::loadView('cases.export-pdf', [
             'gameLabel' => self::GAME_LABELS[$game],
             'date' => $date,
-            'rows' => $rows,
+            'pages' => $pages,
             'totalRecords' => $records->count(),
         ]);
 
