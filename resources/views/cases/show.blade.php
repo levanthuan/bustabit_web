@@ -45,6 +45,16 @@
                 </span>
                 <span class="flex items-center gap-2 text-xs font-medium text-zinc-500">
                     <span id="case-record-count">{{ $records->count() }} bản ghi</span>
+                    <a
+                        href="{{ route('case.export.pdf', $gameKey) }}?date={{ $date->toDateString() }}"
+                        class="inline-flex items-center gap-1 border border-amber-400 bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800 transition hover:bg-amber-200 sm:px-2 sm:py-1 sm:text-xs"
+                        title="Xuất PDF ngày {{ $date->translatedFormat('d/m/Y') }}"
+                    >
+                        <svg class="h-3 w-3 sm:h-3.5 sm:w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span>PDF</span>
+                    </a>
                     @if ($isToday)
                         <span
                             id="case-live-spinner"
