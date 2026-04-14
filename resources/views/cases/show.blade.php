@@ -100,21 +100,22 @@
                     {{-- Thời gian --}}
                     <col class="w-[24%] sm:w-[24%]">
                 </colgroup>
-                <thead id="case-records-thead" class="sticky top-0 z-10 border-b border-amber-300 bg-amber-100 shadow-sm">
+                {{-- Sticky on each th; top offset clears #case-date-nav (z-20) so headers stay visible. --}}
+                <thead id="case-records-thead" class="font-sans">
                     <tr>
-                        <th class="px-1.5 py-2.5 text-left text-[10px] font-bold uppercase tracking-wide text-amber-900 sm:px-4 sm:text-[11px]">
+                        <th class="sticky top-[3.25rem] z-10 border-b border-amber-300 bg-amber-100 px-1.5 py-2.5 text-left text-xs font-semibold tracking-tight text-amber-900 shadow-sm sm:top-[4.25rem] sm:px-4 sm:text-sm">
                             ID
                         </th>
-                        <th class="px-1.5 py-2.5 text-right text-[10px] font-bold uppercase tracking-wide text-amber-900 sm:px-4 sm:text-[11px]">
+                        <th class="sticky top-[3.25rem] z-10 border-b border-amber-300 bg-amber-100 px-1.5 py-2.5 text-right text-xs font-semibold tracking-tight text-amber-900 shadow-sm sm:top-[4.25rem] sm:px-4 sm:text-sm">
                             Đếm
                         </th>
-                        <th class="px-1.5 py-2.5 text-right text-[10px] font-bold uppercase tracking-wide text-amber-900 sm:px-4 sm:text-[11px]">
+                        <th class="sticky top-[3.25rem] z-10 border-b border-amber-300 bg-amber-100 px-1.5 py-2.5 text-right text-xs font-semibold tracking-tight text-amber-900 shadow-sm sm:top-[4.25rem] sm:px-4 sm:text-sm">
                             Giá trị
                         </th>
-                        <th class="px-1.5 py-2.5 text-center text-[10px] font-bold uppercase tracking-wide text-amber-900 sm:px-4 sm:text-[11px]">
+                        <th class="sticky top-[3.25rem] z-10 border-b border-amber-300 bg-amber-100 px-1.5 py-2.5 text-center text-xs font-semibold tracking-tight text-amber-900 shadow-sm sm:top-[4.25rem] sm:px-4 sm:text-sm">
                             Cầu chết
                         </th>
-                        <th class="px-1.5 py-2.5 text-right text-[10px] font-bold uppercase tracking-wide text-amber-900 sm:px-4 sm:text-[11px]">
+                        <th class="sticky top-[3.25rem] z-10 border-b border-amber-300 bg-amber-100 px-1.5 py-2.5 text-right text-xs font-semibold tracking-tight text-amber-900 shadow-sm sm:top-[4.25rem] sm:px-4 sm:text-sm">
                             Giờ
                         </th>
                     </tr>

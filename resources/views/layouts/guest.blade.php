@@ -9,13 +9,13 @@
         <title>@yield('title', 'Đăng nhập') — {{ config('app.name', 'Bustabit Tracking') }}</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=roboto:400,500,600,700&display=swap" rel="stylesheet" />
 
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/app.css', 'resources/js/app.js'])
         @endif
     </head>
-    <body class="min-h-full bg-zinc-50 font-sans text-zinc-900 antialiased">
+    <body class="min-h-full bg-zinc-50 font-sans font-medium text-zinc-900 antialiased">
         <div class="fixed inset-0 overflow-hidden" aria-hidden="true">
             <div
                 class="absolute -left-1/4 top-0 h-[520px] w-[520px] rounded-full bg-amber-200/40 blur-[100px]"

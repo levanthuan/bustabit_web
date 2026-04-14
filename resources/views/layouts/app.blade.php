@@ -9,7 +9,7 @@
         <title>@yield('title', 'Trang chủ') — {{ config('app.name', 'Bustabit Tracking') }}</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=roboto:400,500,600,700&display=swap" rel="stylesheet" />
 
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -25,7 +25,7 @@
         </script>
     </head>
     {{-- h-full + overflow-hidden: toàn trang không scroll, chỉ <main> scroll --}}
-    <body class="h-full overflow-hidden bg-zinc-100/80 font-sans text-zinc-900 antialiased">
+    <body class="h-full overflow-hidden bg-zinc-100/80 font-sans font-medium text-zinc-900 antialiased">
         <div class="flex h-full flex-col lg:flex-row">
             <div id="admin-overlay" class="lg:hidden" aria-hidden="true"></div>
 
