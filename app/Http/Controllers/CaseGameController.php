@@ -7,11 +7,13 @@ use App\Models\CaseTt10;
 use App\Models\CaseTt3;
 use App\Models\CaseTt5;
 use App\Models\CaseTt7;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 
 class CaseGameController extends Controller
 {
@@ -126,6 +128,45 @@ class CaseGameController extends Controller
                 'game_datetime' => $r->game_datetime?->setTimezone(self::TZ)->format('Y-m-d H:i:s'),
             ])->values()->all(),
         ]);
+    }
+
+    public function exportPdf(Request $request, string $game): Response
+    {
+        $modelClass = self::GAME_MODELS[$game] ?? null;
+
+        if ($modelClass === null) {
+            abort(404);
+        }
+
+        $dateInput = $request->query('date');
+        $date = $this->parseDate($dateInput) ?? Carbon::today(self::TZ);
+
+        [$startUtc, $endUtc] = $this->utcBoundary($date);
+
+        /** @var Collection<int, CaseGameRecord> $records */
+        $records = $modelClass::query()
+            ->whereBetween('game_datetime', [$startUtc, $endUtc])
+            ->orderBy('id')
+            ->get();
+
+        $columns = 3;
+        $perColumn = (int) ceil($records->count() / $columns);
+        $groups = $perColumn > 0
+            ? $records->chunk($perColumn)->values()
+            : collect();
+
+        $pdf = Pdf::loadView('cases.export-pdf', [
+            'gameLabel' => self::GAME_LABELS[$game],
+            'date' => $date,
+            'groups' => $groups,
+            'totalRecords' => $records->count(),
+        ]);
+
+        $pdf->setPaper('a4', 'landscape');
+
+        $filename = sprintf('%s_%s.pdf', $game, $date->format('Y-m-d'));
+
+        return $pdf->download($filename);
     }
 
     /**

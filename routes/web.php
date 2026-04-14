@@ -18,6 +18,10 @@ Route::middleware('auth')->group(function (): void {
         ->where('game', 'tt3|tt5|tt7|tt10')
         ->name('case.show');
 
+    Route::get('/tt/{game}/export-pdf', [CaseGameController::class, 'exportPdf'])
+        ->where('game', 'tt3|tt5|tt7|tt10')
+        ->name('case.export.pdf');
+
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 
