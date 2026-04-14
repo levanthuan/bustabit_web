@@ -126,7 +126,7 @@
                         <tr
                             data-record-id="{{ $record->id }}"
                             data-record-datetime="{{ $record->game_datetime?->setTimezone('Asia/Ho_Chi_Minh')->format('Y-m-d H:i:s') }}"
-                            class="{{ $isDead ? 'border-l-4 border-rose-500 bg-rose-100 hover:bg-rose-100/80' : 'hover:bg-zinc-50' }} transition"
+                            class="{{ $isDead ? 'bg-rose-100 shadow-[inset_4px_0_0_#f43f5e] hover:bg-rose-100/80' : 'hover:bg-zinc-50' }} transition"
                         >
                             <td class="truncate px-1.5 py-1.5 text-left font-mono text-[10px] tabular-nums {{ $isDead ? 'text-rose-400' : 'text-zinc-400' }} sm:px-4 sm:py-2 sm:text-xs">
                                 {{ $record->id }}

@@ -192,7 +192,7 @@ function initCaseLivePoll() {
         tr.dataset.recordId = String(record.id);
         tr.dataset.recordDatetime = record.game_datetime ?? '';
         tr.className = isDead
-            ? 'border-l-4 border-rose-500 bg-rose-100 hover:bg-rose-100/80 transition'
+            ? 'bg-rose-100 shadow-[inset_4px_0_0_#f43f5e] hover:bg-rose-100/80 transition'
             : 'bg-emerald-50/80 hover:bg-emerald-100/70 transition';
 
         const tdId = document.createElement('td');
