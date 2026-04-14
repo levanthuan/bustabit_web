@@ -149,16 +149,27 @@ class CaseGameController extends Controller
             ->orderBy('id')
             ->get();
 
-        $columns = 3;
-        $perColumn = (int) ceil($records->count() / $columns);
+        $groupCount = 4;
+        $perColumn = (int) ceil($records->count() / $groupCount);
         $groups = $perColumn > 0
             ? $records->chunk($perColumn)->values()
             : collect();
 
+        /** @var list<array{0: CaseGameRecord|null, 1: CaseGameRecord|null, 2: CaseGameRecord|null}> $rows */
+        $rows = [];
+        for ($i = 0; $i < $perColumn; $i++) {
+            $row = [];
+            for ($g = 0; $g < $groupCount; $g++) {
+                $group = $groups->get($g);
+                $row[] = $group instanceof Collection ? $group->values()->get($i) : null;
+            }
+            $rows[] = $row;
+        }
+
         $pdf = Pdf::loadView('cases.export-pdf', [
             'gameLabel' => self::GAME_LABELS[$game],
             'date' => $date,
-            'groups' => $groups,
+            'rows' => $rows,
             'totalRecords' => $records->count(),
         ]);
 
