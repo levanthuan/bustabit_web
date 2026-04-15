@@ -298,7 +298,7 @@ function initCaseLivePoll() {
 
             updateCount(records.length);
             syncAfterIdFromDom();
-            scrollToBottom();
+            // scrollToBottom();
             if (spinnerText) {
                 spinnerText.textContent = 'Đã sync';
             }
