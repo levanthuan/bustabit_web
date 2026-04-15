@@ -186,6 +186,16 @@ function initCaseLivePoll() {
         }
     }
 
+    /** Kiểm tra người dùng có đang ở gần cuối trang không (trong khoảng 80px). */
+    function isNearBottom() {
+        const main = document.querySelector('main');
+        if (!main) {
+            return false;
+        }
+        const scrollable = main.scrollHeight - main.clientHeight;
+        return scrollable - main.scrollTop < 80;
+    }
+
     function buildRow(record) {
         const isDead = Number(record.dead_flg) === 1;
         const tr = document.createElement('tr');
@@ -292,13 +302,18 @@ function initCaseLivePoll() {
                 tablePanel.classList.remove('hidden');
             }
 
+            const wasNearBottom = isNearBottom();
+
             records.forEach((rec) => {
                 tbody.appendChild(buildRow(rec));
             });
 
             updateCount(records.length);
             syncAfterIdFromDom();
-            // scrollToBottom();
+
+            if (wasNearBottom) {
+                scrollToBottom();
+            }
             if (spinnerText) {
                 spinnerText.textContent = 'Đã sync';
             }
