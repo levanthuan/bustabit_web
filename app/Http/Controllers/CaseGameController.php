@@ -149,7 +149,7 @@ class CaseGameController extends Controller
             ->orderBy('id')
             ->get();
 
-        $groupCount = 4;
+        $groupCount = 5;
         $rowsPerPage = 45;
         $recordsPerPage = $rowsPerPage * $groupCount;
 
@@ -177,6 +177,7 @@ class CaseGameController extends Controller
             'gameLabel' => self::GAME_LABELS[$game],
             'date' => $date,
             'pages' => $pages,
+            'groupCount' => $groupCount,
             'totalRecords' => $records->count(),
         ]);
 

@@ -14,6 +14,8 @@
 
         .page {
             page-break-after: always;
+            padding-left: 20px;
+            padding-right: 20px;
         }
 
         .page:last-child {
@@ -66,25 +68,13 @@
             border-left: 2px solid #d97706;
         }
 
-        .dead-row-1 td:nth-child(-n+4) {
+        @for ($g = 1; $g <= $groupCount; $g++)
+        @php $start = ($g - 1) * 4 + 1; $end = $g * 4; @endphp
+        .dead-row-{{ $g }} td:nth-child(n+{{ $start }}):nth-child(-n+{{ $end }}) {
             background-color: #ffe4e6;
             font-weight: bold;
         }
-
-        .dead-row-2 td:nth-child(n+5):nth-child(-n+8) {
-            background-color: #ffe4e6;
-            font-weight: bold;
-        }
-
-        .dead-row-3 td:nth-child(n+9):nth-child(-n+12) {
-            background-color: #ffe4e6;
-            font-weight: bold;
-        }
-
-        .dead-row-4 td:nth-child(n+13) {
-            background-color: #ffe4e6;
-            font-weight: bold;
-        }
+        @endfor
 
         .empty-cell {
             color: #d4d4d8;
@@ -124,36 +114,26 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Đếm</th>
-                        <th>Giá trị</th>
-                        <th>Cầu chết</th>
-                        <th>Giờ</th>
-                        <th class="sep">Đếm</th>
-                        <th>Giá trị</th>
-                        <th>Cầu chết</th>
-                        <th>Giờ</th>
-                        <th class="sep">Đếm</th>
-                        <th>Giá trị</th>
-                        <th>Cầu chết</th>
-                        <th>Giờ</th>
-                        <th class="sep">Đếm</th>
-                        <th>Giá trị</th>
-                        <th>Cầu chết</th>
-                        <th>Giờ</th>
+                        @for ($g = 0; $g < $groupCount; $g++)
+                            <th @if ($g > 0) class="sep" @endif>Đếm</th>
+                            <th>Giá trị</th>
+                            <th>Cầu chết</th>
+                            <th>Giờ</th>
+                        @endfor
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($rows as $row)
                         @php
                             $classes = [];
-                            for ($g = 0; $g < 4; $g++) {
+                            for ($g = 0; $g < $groupCount; $g++) {
                                 if (isset($row[$g]) && (int) $row[$g]->dead_flg === 1) {
                                     $classes[] = 'dead-row-' . ($g + 1);
                                 }
                             }
                         @endphp
                         <tr class="{{ implode(' ', $classes) }}">
-                            @for ($g = 0; $g < 4; $g++)
+                            @for ($g = 0; $g < $groupCount; $g++)
                                 @php $rec = $row[$g] ?? null; @endphp
                                 @if ($rec)
                                     <td @if ($g > 0) class="sep" @endif>{{ $rec->count ?? '—' }}</td>
