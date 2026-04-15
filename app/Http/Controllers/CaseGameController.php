@@ -157,11 +157,11 @@ class CaseGameController extends Controller
         $pages = [];
 
         foreach ($records->chunk($recordsPerPage)->values() as $pageRecords) {
-            $perColumn = (int) ceil($pageRecords->count() / $groupCount);
-            $groups = $pageRecords->chunk($perColumn)->values();
+            $groups = $pageRecords->chunk($rowsPerPage)->values();
+            $maxRows = $groups->first()?->count() ?? 0;
 
             $rows = [];
-            for ($i = 0; $i < $perColumn; $i++) {
+            for ($i = 0; $i < $maxRows; $i++) {
                 $row = [];
                 for ($g = 0; $g < $groupCount; $g++) {
                     $group = $groups->get($g);
